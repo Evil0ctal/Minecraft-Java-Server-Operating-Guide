@@ -1,6 +1,8 @@
 # Minecraft-Java-Server-Operating-Guide
 
 > 本指南是一个全面的Minecraft服务器搭建指南，适用于初学者和有经验的服务器管理员。我们将从基本的准备工作到复杂的服务器优化，一步步引导你如何科学地搭建一个Minecraft Java服务器。
+> 本指南配有视频教程，带你手把手操作。
+> [中文]：[Bilibili](https://space.bilibili.com/12505756/video)
 
 ## 开服前的准备
 
@@ -53,3 +55,108 @@
 ## 开启你的第一个服务器
 
 > 相信当你阅读完上面的介绍后，对Minecraft服务器已经有了一定的认知，在下面我们将带你开启你的第一个Minecraft服务器，并且安装一些插件，然后使用PaperMC作为后端支持，运行在Windows上，随后使用FRP安全的将服务器暴露在互联网中。
+
+#### 1. 安装Microsoft OpenJDK 17
+
+Minecraft服务器需要Java运行环境。我们推荐使用Microsoft OpenJDK 17，它是一个免费且经过优化的JDK版本。访问[Microsoft OpenJDK官网](https://www.microsoft.com/openjdk)下载适用于你的操作系统的安装包。
+
+- 下载完成后，运行安装程序并按照指示完成安装。
+- 安装完成后，打开命令提示符（Windows）或终端（Linux/macOS），输入 `java -version` 确认安装成功。你应该看到版本号为17的相关信息。
+
+#### 2. 下载PaperMC
+
+PaperMC 是一个高性能的Minecraft服务器，提供了更好的性能和更多的配置选项。访问 [PaperMC官网](https://papermc.io/)，选择适合你的Minecraft版本的PaperMC。
+
+- 下载 `.jar` 文件后，选择一个适合的位置创建一个文件夹，例如 `C:\MinecraftServer` 或 `/home/user/minecraftserver`。
+- 将下载的 `.jar` 文件放入这个文件夹。
+
+#### 3. 运行服务器
+
+打开命令提示符或终端，导航到你的服务器文件夹，使用以下命令启动服务器：
+
+```bash
+java -Xms1024M -Xmx2048M -jar paper-xxx.jar nogui
+```
+
+* `-Xms1024M` 和`-Xmx2048M` 分别是服务器的最小和最大内存限制。根据你的服务器硬件配置，你可能需要调整这些值。
+* 如果是首次运行，服务器将要求你接受Minecraft的最终用户许可协议（EULA）。打开生成的`eula.txt` 文件，将`eula=false` 改为`eula=true`。
+
+#### 4. 配置服务器
+
+服务器首次运行后，会生成 `server.properties` 文件，你可以在这里配置服务器的基本设置：
+
+* `server-port`: 修改服务器监听的端口，默认是25565。
+* `max-players`: 设置服务器允许连接的最大玩家数。
+* `level-name`: 设置世界的名称，决定服务器使用哪个文件夹作为世界数据。
+
+PaperMC 和 Spigot 提供了 `paper.yml` 和 `spigot.yml` 配置文件，你可以在这里进行更详细的设置，比如调整视距、实体数量和区块加载等，以优化服务器性能。
+
+#### 5. 安装和配置插件
+
+PaperMC 支持 Bukkit 和 Spigot 插件，可以极大地扩展服务器的功能。
+
+* 从网站如[SpigotMC]() 和[Bukkit]() 下载插件。
+* 将`.jar` 文件放入`plugins` 文件夹。
+* 重启服务器，插件将被加载。
+
+**基本插件推荐**：
+
+* **EssentialsX**: 提供基本功能，如家园、传送和私聊。
+* **WorldEdit**: 强大的地图编辑工具。
+* **PermissionsEx**: 权限管理插件，管理玩家权限。
+* **Vault**: 提供各种经济系统的支持。
+
+插件的配置文件通常会在首次加载时生成在 `plugins` 文件夹的相应插件子文件夹内。它们通常是YAML或JSON格式，可以用文本编辑器进行修改。
+
+对于插件的调试和管理，你可以使用 **PlugMan** 插件来动态加载和卸载插件，这在测试时非常有用。选择插件时，请考虑插件的更新频率、社区反馈和是否适合你的服务器设定。
+
+#### 6. 使用FRP进行内网穿透
+
+如果你没有公网IP，可以使用FRP将你的服务器暴露在互联网中。frp 是一个使用Go语言编写的专注于内网穿透的高性能的反向代理应用，支持 TCP、UDP、HTTP、HTTPS 等多种协议，且支持 P2P 通信。可以将内网服务以安全、便捷的方式通过具有公网 IP 节点的中转暴露到公网。你需要一台具有公网IP的VPS作为入口。首先，在VPS上安装并配置FRP服务端（frps），然后在你的Minecraft服务器上安装并配置FRP客户端（frpc）。
+
+- 下载frp至你的电脑
+  
+  - Windows和Linux请下载对应的版本。
+  - 下载地址：[https://github.com/fatedier/frp/releases](https://github.com/fatedier/frp/releases)
+- 配置FRP
+  
+  - 服务端-拥有公网IP的机器（frps）
+    
+    - 服务端只需要配置端口以及设置一个安全的连接密钥供客户端连接。
+    - 标准的`frps.toml`配置文件如下：
+    - ```toml
+      bindPort = 7000
+      auth.token = "REPLACE_YOUR_TOKEN（换成你的密钥）"
+      ```
+    - 在服务器或者云服务器面板中放行`bindPort`和frpc配置文件中`remotePort` 指定的端口，如默认的7000和下面演示的25566端口，不要忘记修改auth.token。
+    - 使用以下命令启动frps服务：`./frps -c ./frps.toml`。
+    - 如果需要在后台长期运行，建议结合其他工具，如 [systemd](https://gofrp.org/zh-cn/docs/setup/systemd/) 和 `supervisor`。
+  - 客户端-运行Minecraft服务器的机器（frpc）
+    
+    - 客户端需要填写与服务端一样的端口和auth.token
+    - 标准的`frpc.toml`配置文件如下：
+    - ```toml
+      serverAddr = "REPLACE_YOUR_SERVER_IP（换成你的服务端IP）"
+      serverPort = 7000
+      auth.token = "REPLACE_YOUR_TOKEN（换成你的密钥）"
+      
+      [[proxies]]
+      name = "Minecraft-Server-TCP-25566"
+      type = "tcp"
+      localIP = "127.0.0.1"
+      localPort = 25565
+      remotePort = 25566
+      ```
+    - 使用以下命令启动客户端：`frpc.exe -c ./frpc.toml`。
+- 配置好FRPS和FRPC后，确保在VPS上设置好防火墙规则，只允许必要的端口（例如 Minecraft 端口和 FRP 端口）。
+- 访问[FRP的GitHub页面](https://github.com/fatedier/frp) 获取详细的安装和配置指南。
+- 现在只需要在客户端的多人游戏中输入运行frps（服务端）的IP地址以及25566端口即可进入服务器游玩。
+- 格式如: `123.456.789.0:25566`
+
+#### 7. 备份服务器和权限控制
+
+**备份**：定期备份你的服务器数据非常重要。你可以使用如 **eBackupPlugin** 插件自动备份，或者手动复制整个Minecraft服务器文件夹到安全的位置。
+
+**权限控制**：使用权限插件如 **PermissionsEx** 或 **LuckPerms** 来管理玩家权限。合理的权限设置可以防止插件指令滥用，并确保玩家有良好的游戏体验。
+
+通过上述步骤，你可以成功地搭建并运行一个高效、安全且功能丰富的Minecraft服务器。记得定期维护服务器，更新插件和服务器软件，以及与你的社区保持互动。祝你的Minecraft服务器旅程顺利！
