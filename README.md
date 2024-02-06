@@ -108,7 +108,7 @@ PaperMC 和 Spigot 提供了 `paper.yml` 和 `spigot.yml` 配置文件，你可�
 
 PaperMC 支持 Bukkit 和 Spigot 插件，可以极大地扩展服务器的功能。
 
-* 从网站如[SpigotMC]() 和[Bukkit]() 下载插件。
+* 从网站如[SpigotMC](https://www.spigotmc.org/resources/) 和[Bukkit](https://dev.bukkit.org/bukkit-plugins) 下载插件。
 * 将`.jar` 文件放入`plugins` 文件夹。
 * 重启服务器，插件将被加载。
 
