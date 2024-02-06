@@ -5,6 +5,18 @@
 > 🎥 本指南配有视频教程，带你手把手操作。
 > 
 > - [中文]：[Bilibili](https://space.bilibili.com/12505756/video)
+>
+> 🩷 也欢迎大家来我的Minecraft服务器游玩
+> 
+>  网站：[https://boba.cat/](https://boba.cat/)
+> 
+>  服务器版本: 1.20.1
+> 
+>  服务器位置：旧金山湾区
+> 
+>  服主微信：Evil0ctal
+> 
+>  服务器Discord：[https://discord.gg/shNgKgsgNs](https://discord.gg/shNgKgsgNs)  
 
 ## 📋 开服前的准备
 
